@@ -1,0 +1,28 @@
+version: "3.7"
+services:
+  data_db:
+    image: mysql:5.7
+    restart: always
+    environment:
+      MYSQL_DATABASE: "starwars"
+      MYSQL_PASSWORD: "root"
+      MYSQL_ROOT_PASSWORD: "root"
+    ports:
+      - "3308:3306"
+    volumes:
+      - ./init_test.sql:/docker-entrypoint-initdb.d/init_test.sql
+      - my-db:/var/lib/mysql
+  python_app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 6001:6001
+    depends_on:
+      - data_db
+    tty: true
+volumes:
+  my-db:
+networks:
+  default:
+    name: servermysql
